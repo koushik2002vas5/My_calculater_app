@@ -244,7 +244,7 @@ class _CalculatorHomeState extends State<CalculatorHome> {
                 Row(
                   children: [
                     _buildButton(
-                        "C", Colors.red.shade700, textColor, _resetCalculator),
+                        "AC", Colors.red.shade700, textColor, _resetCalculator),
                   ],
                 ),
               ],
