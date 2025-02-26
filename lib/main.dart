@@ -34,9 +34,11 @@ class _CalculatorHomeState extends State<CalculatorHome> {
   String _firstOperand = "";
   String _operator = "";
   bool _shouldResetDisplay = false;
+  bool _hasError = false;
 
   void _onNumberPressed(String number) {
     setState(() {
+      if (_hasError) return;
       if (_shouldResetDisplay) {
         _currentNumber = number;
         _shouldResetDisplay = false;
@@ -53,6 +55,7 @@ class _CalculatorHomeState extends State<CalculatorHome> {
 
   void _onDecimalPressed() {
     setState(() {
+      if (_hasError) return;
       if (!_currentNumber.contains(".")) {
         if (_shouldResetDisplay || _currentNumber.isEmpty) {
           _currentNumber = "0.";
@@ -66,6 +69,7 @@ class _CalculatorHomeState extends State<CalculatorHome> {
   }
 
   void _onOperatorPressed(String operator) {
+    if (_hasError) return;
     if (_firstOperand.isNotEmpty &&
         _operator.isNotEmpty &&
         _currentNumber.isNotEmpty) {
@@ -79,6 +83,7 @@ class _CalculatorHomeState extends State<CalculatorHome> {
   }
 
   void _onEqualsPressed() {
+    if (_hasError) return;
     if (_firstOperand.isNotEmpty &&
         _operator.isNotEmpty &&
         _currentNumber.isNotEmpty) {
@@ -94,6 +99,7 @@ class _CalculatorHomeState extends State<CalculatorHome> {
     setState(() {
       if (_operator == "÷" && second == 0) {
         _displayText = "Error";
+        _hasError = true;
         return;
       }
 
@@ -111,11 +117,24 @@ class _CalculatorHomeState extends State<CalculatorHome> {
           result = first / second;
           break;
       }
+
       _displayText = result.toString();
       _firstOperand = _displayText;
       _currentNumber = "";
       _operator = "";
       _shouldResetDisplay = true;
+      _hasError = false;
+    });
+  }
+
+  void _resetCalculator() {
+    setState(() {
+      _displayText = "0";
+      _currentNumber = "";
+      _firstOperand = "";
+      _operator = "";
+      _shouldResetDisplay = false;
+      _hasError = false;
     });
   }
 
@@ -220,6 +239,12 @@ class _CalculatorHomeState extends State<CalculatorHome> {
                         () => _onEqualsPressed()),
                     _buildButton("+", operatorColor, textColor,
                         () => _onOperatorPressed("+")),
+                  ],
+                ),
+                Row(
+                  children: [
+                    _buildButton(
+                        "C", Colors.red.shade700, textColor, _resetCalculator),
                   ],
                 ),
               ],
